@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css" />
+
+    <script src="https://unpkg.com/tesseract.js@2.1.4/dist/tesseract.min.js"></script>
+
+    <script type="module">
+      const { createWorker } = Tesseract;
+
+      var status = document.querySelector(".loading");
+      var progress = document.querySelector(".progress");
+
+      const worker = createWorker({
+        logger: (m) => {
+          console.log(m);
+          if (m.status === "recognizing text") {
+            status.innerHTML = "분석 중...";
+            progress.innerHTML = Math.floor(m.progress * 100) + "%";
+
+            if (m.progress === 1) {
+              status.innerHTML = "분석 완료✨";
+              progress.innerHTML = "";
+            }
+          } else {
+            status.innerHTML = "이미지 전송 중, 기다려주세요!!";
+          }
+        },
+      });
+
+      /*개인정보 추출*/
+      const findInfomation = (data) => {
+        var phone = /\d{3}-\d{4}-\d{4}/;
+        var id =
+          /\d{2}([0]\d|[1][0-2])([0][1-9]|[1-2]\d|[3][0-1])[-]*[1-4]\d{6}/;
+
+        var result_phone = [];
+        var result_id = [];
+
+        data.words.map((word) => {
+          if (word.text.match(phone)) {
+            result_phone.push(word);
+          }
+
+          if (word.text.match(id)) {
+            result_id.push(word);
+          }
+        });
+
+        if (result_phone) {
+          console.log("폰 번호 : ", result_phone);
+          result_phone.map((res) => {
+            console.log("좌표는 : ", res.line.bbox);
+            var { x0, y0, x1, y1 } = res.line.bbox;
+            draw(x0, y0, x1, y1);
+          });
+        }
+
+        if (result_id) {
+          console.log("주민등록번호 :", result_id);
+          result_id.map((res) => {
+            console.log("좌표는 : ", res.line.bbox);
+            var { x0, y0, x1, y1 } = res.line.bbox;
+            draw(x0, y0, x1, y1);
+          });
+        }
+      };
+
+      /*ocr 결과 콘솔 출력*/
+      function result(res) {
+        console.log("result was:", res);
+
+        res.words.forEach(function (w) {
+          var b = w.bbox;
+        });
+
+        findInfomation(res);
+      }
+
+      /* 테서랙elm트 실행 */
+      const recognize = async (file) => {
+        const {
+          data: { text },
+        } = await Tesseract.recognize(file, "kor", {
+          corePath:
+            "https://unpkg.com/tesseract.js-core@v2.0.0/tesseract-core.wasm.js",
+          logger: (m) => console.log(m),
+        });
+        console.log(text);
+        result = text;
+      };
+
+      const elm = document.getElementById("ex_filename");
+
+      /*테서렉트 서버로 파일 보내기*/
+      const sendFile = async () => {
+        console.log("성공", elm.files[0]);
+        await worker.load();
+        await worker.loadLanguage("kor");
+        await worker.initialize("kor");
+        const { data } = await worker.recognize(elm.files[0]);
+        await worker.terminate();
+        result(data);
+      };
+
+      var sizeModified = false;
+      var B = 1;
+
+      /*캔버스에 사진 보여주기*/
+      function readInputFile(e) {
+        var file = e.target.files;
+
+        var reader = new FileReader();
+        //var img = new Image();
+        var img = document.createElement("img");
+
+        var w_width = window.innerWidth;
+        var w_height = window.innerHeight;
+
+        var WIDTH = 55;
+        var HEIGHT = 55;
+
+        reader.onload = function (e) {
+          img.onload = function () {
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0);
+
+            WIDTH = img.width;
+            HEIGHT = img.height;
+
+            if (HEIGHT > w_height * 0.3) {
+              console.log("세로가 커요");
+
+              B = (w_height * 0.3) / HEIGHT;
+
+              WIDTH = WIDTH * B;
+              HEIGHT = HEIGHT * B;
+              console.log(B, WIDTH, HEIGHT);
+            }
+
+            if (WIDTH > w_width * 0.8) {
+              console.log("가로가 커요");
+              B = (w_width * 0.8) / WIDTH;
+              WIDTH = WIDTH * B;
+              HEIGHT = HEIGHT * B;
+              console.log(B, WIDTH, HEIGHT);
+            }
+
+            // else {
+            //   WIDTH = img.width;
+            //   HEIGHT = img.height;
+            // }
+
+            // WIDTH = w_width * 0.8;
+            // HEIGHT = w_height * 0.8;
+            // sizeModified = 0.8;
+
+            canvas.width = WIDTH;
+            canvas.height = HEIGHT;
+            ctx.drawImage(img, 0, 0, WIDTH, HEIGHT);
+          };
+
+          img.src = e.target.result;
+        };
+
+        reader.readAsDataURL(file[0]);
+      }
+
+      /*마스킹 그리기*/
+      function draw(x0, y0, x1, y1) {
+        var start_x = x0;
+        var start_y = y0;
+        var width = x1 - x0;
+        var height = y1 - y0;
+
+        ctx.fillStyle = "rgb(0,0,0,1)";
+
+        ctx.fillRect(start_x * B, start_y * B, width * B, height * B);
+      }
+
+      /*수정한 사진 로컬에 저장하는 함수*/
+      function Save(event) {
+        console.log("저장");
+        const image = canvas.toDataURL("image/jpeg");
+        event.target.href = image; // 수정된 캔버스 사진 저장
+        event.target.download = "PaintIMG[🎨]";
+      }
+
+      const canvas = document.querySelector("#jsCanvas");
+      const ctx = canvas.getContext("2d");
+      const startBtn = document.querySelector(".start-btn");
+      const realInput = document.querySelector(".upload-hidden");
+      var saveBtn = document.querySelector("#save");
+
+      realInput.addEventListener("change", readInputFile);
+      startBtn.addEventListener("click", sendFile);
+
+      saveBtn.addEventListener("click", Save);
+    </script>
+  </head>
+
+  <body>
+    <img src="./assets/BGcircle.svg" />
+    <h1>사진 속 개인 정보 마스킹</h1>
+
+    <label for="ex_filename" class="select-btn">이미지 선택</label>
+    <div class="filebox">
+      <input class="upload-name hidden" value="파일선택" disabled="disabled" />
+
+      <input
+        type="file"
+        class="upload-hidden"
+        id="ex_filename"
+        accept="img/*"
+        required
+      />
+    </div>
+
+    <div>
+      <p class="loading"></p>
+      <p class="progress"></p>
+    </div>
+
+    <canvas id="jsCanvas" class="canvas" style="margin: 0 10px 0 10px"></canvas>
+
+    <div class="btn-container">
+      <a id="save">저장</a>
+      <div class="start-btn">시작</div>
+    </div>
+
+    <script src="./InputBtn.js"></script>
+  </body>
+</html>

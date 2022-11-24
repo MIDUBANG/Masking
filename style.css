@@ -1,0 +1,195 @@
+* {
+  margin: 0;
+}
+
+body {
+  background-color: #f7f5fa;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+img {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+h1 {
+  margin-top: 141px;
+  margin-bottom: 34px;
+
+  font-family: "Noto Sans KR";
+  font-style: normal;
+  font-weight: 350;
+  font-size: 32px;
+  line-height: 46px;
+  text-align: center;
+
+  color: #000000;
+}
+
+.loading {
+  font-family: "Noto Sans KR";
+  font-style: normal;
+  font-weight: 350;
+  font-size: 12px;
+  line-height: 17px;
+  text-align: center;
+
+  color: #959595;
+}
+
+.progress {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 40px;
+
+  color: #9b9b9b;
+
+  margin-bottom: 20px;
+}
+
+/* 테스트 */
+
+.filebox {
+  margin-bottom: 20px;
+}
+.filebox input[type="file"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.filebox label {
+  display: inline-block;
+  padding: 0.5em 0.75em;
+  color: #999;
+  font-size: inherit;
+  line-height: normal;
+  vertical-align: middle;
+  background-color: #fdfdfd;
+  cursor: pointer;
+  border: 1px solid #ebebeb;
+  border-bottom-color: #e2e2e2;
+  border-radius: 0.25em;
+}
+
+/* named upload */
+.filebox .upload-name {
+  width: auto;
+
+  text-align: center;
+
+  margin-top: 30px;
+  font-size: inherit;
+  font-family: inherit;
+  line-height: normal;
+  vertical-align: middle;
+  background-color: transparent;
+  border: none;
+  border-bottom-color: #e2e2e2;
+  border-radius: 0.25em;
+  -webkit-appearance: none; /* 네이티브 외형 감추기 */
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.hidden {
+  display: none;
+}
+
+/*  */
+
+.select-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 335px;
+  height: 76px;
+  background: linear-gradient(
+    30.18deg,
+    #5a73fc 57.1%,
+    rgba(83, 108, 249, 0.853858) 84.35%,
+    rgba(74, 100, 245, 0.66486) 99.99%,
+    rgba(74, 100, 245, 0) 100%
+  );
+  filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+  border-radius: 25px;
+
+  font-family: "Noto Sans KR";
+  font-style: normal;
+  font-weight: 350;
+  font-size: 32px;
+
+  text-align: center;
+
+  color: #ffffff;
+}
+
+.btn-container {
+  position: absolute;
+  bottom: 20px;
+  transform: translate(100px, 0);
+
+  margin-top: auto;
+
+  display: flex;
+  justify-content: end;
+}
+#save {
+  margin-right: 10px;
+  width: 41px;
+  height: 41px;
+  background: conic-gradient(
+    from 224.06deg at 50% 50%,
+    #5a73fc 0deg,
+    rgba(107, 129, 255, 0.72) 125.63deg,
+    rgba(90, 115, 252, 0.911458) 166.87deg,
+    #5a73fc 360deg
+  );
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 50%;
+
+  font-family: "Noto Sans KR";
+  font-style: normal;
+  font-weight: 350;
+  font-size: 14px;
+  color: rgb(231, 231, 231);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.start-btn {
+  font-family: "Noto Sans KR";
+  font-style: normal;
+  font-weight: 350;
+  font-size: 14px;
+  color: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 41px;
+  height: 41px;
+  left: 0px;
+  top: 0px;
+
+  background: linear-gradient(
+    144.16deg,
+    #cc71f7 14.66%,
+    rgba(214, 141, 249, 0.990625) 53.31%,
+    rgba(228, 172, 255, 0.980931) 72.09%,
+    rgba(222, 151, 255, 0.97) 85.34%
+  );
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 12px;
+}
