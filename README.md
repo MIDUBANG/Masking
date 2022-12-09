@@ -14,7 +14,7 @@ Tesseract.js를 이용해 이미지 속 개인정보를 자동으로 마스킹�
 
 ## 🚀 Run Project
 ```
-git clone
+git clone https://github.com/MIDUBANG/Masking-Personal-Information-Tesseract.git
 ```
 
 ## 🚀 Stacks
